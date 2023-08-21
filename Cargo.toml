@@ -1,0 +1,11 @@
+[package]
+name = "xtea-cipher"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.60"
+description = "A minimal XTEA block (de)cipher."
+authors = ["Mack <github.com/heavens>"]
+keywords = ["crypto", "cipher"]
+
+[dependencies]
+buffed-io = { git = "https://github.com/heavens/buffed-io" }
