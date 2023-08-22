@@ -3,9 +3,9 @@ name = "xtea-cipher"
 version = "1.0.0"
 edition = "2021"
 rust-version = "1.60"
-description = "A minimal XTEA block (de)cipher."
+description = "A minimal, zero-dependency XTEA block (de)cipher utility."
 authors = ["Mack <github.com/heavens>"]
 keywords = ["crypto", "cipher"]
+readme = "README.md"
 
 [dependencies]
-buffed-io = { git = "https://github.com/heavens/buffed-io" }
