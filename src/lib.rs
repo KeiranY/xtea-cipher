@@ -1,7 +1,7 @@
 use bytes::Bytes;
 use std::io;
 
-mod bytes;
+pub mod bytes;
 
 /// A 128-bit key used by an [Xtea] instance when processing the block cipher.
 #[derive(Clone, Debug)]
