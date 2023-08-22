@@ -8,5 +8,4 @@ authors = ["Mack <github.com/heavens>"]
 keywords = ["cryptography", "cipher", "io"]
 readme = "README.md"
 license = "MIT"
-
-[dependencies]
+repository = "https://github.com/heavens/xtea-cipher"
