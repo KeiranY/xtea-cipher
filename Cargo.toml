@@ -5,7 +5,8 @@ edition = "2021"
 rust-version = "1.60"
 description = "A minimal, zero-dependency XTEA block (de)cipher utility."
 authors = ["Mack <github.com/heavens>"]
-keywords = ["crypto", "cipher"]
+keywords = ["cryptography", "block cipher", "io"]
 readme = "README.md"
+license = "MIT"
 
 [dependencies]

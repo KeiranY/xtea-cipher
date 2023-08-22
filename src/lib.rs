@@ -5,7 +5,7 @@ pub mod bytes;
 
 /// A 128-bit key used by an [Xtea] instance when processing the block cipher.
 #[derive(Clone, Debug)]
-pub struct XteaKey(Vec<u32>);
+struct XteaKey(Vec<u32>);
 
 impl std::ops::Index<usize> for XteaKey {
     type Output = u32;
@@ -30,19 +30,29 @@ impl Xtea {
 
     const DELTA: u32 = 0x9E3779B9;
 
-    pub fn new(key: Vec<u32>) -> Self {
+    /// Assigns a 128-bit key using the passed-in array of 32-bit integers.
+    pub fn using_key(key: [u32; 4]) -> Self {
         assert!(key.len() == 4);
         Self {
-            key: XteaKey(key),
+            key: XteaKey(key.to_vec()),
             rounds: Self::DEFAULT_ROUNDS,
         }
     }
 
-    pub fn encipher(&self, input: &mut Bytes, output: &mut Bytes) -> io::Result<()> {
-        self.do_block_cipher(input, output, false)
+    /// Specifies the amount of rounds to be used when processing the block ciphers. This overrides the default amount of rounds
+    /// used of 32.
+    pub fn with_rounds(mut self, rounds: u32) -> Self {
+        self.rounds = rounds;
+        self
     }
 
-    pub fn decipher(&self, input: &mut Bytes, output: &mut Bytes) -> io::Result<()> {
+    /// Encrypts the supplied `input` data and writes the processed results to the `output` array.
+    pub fn encipher(&self, mut input: &mut [u8], mut output: &mut [u8]) -> io::Result<()> {
+        self.do_block_cipher(&mut input, &mut output, false)
+    }
+
+    /// Decrypts the supplied encrypted `input` array and writes the processed results to the `output` array.
+    pub fn decipher(&self, input: &mut [u8], output: &mut [u8]) -> io::Result<()> {
         self.do_block_cipher(input, output, true)
     }
 
@@ -87,23 +97,25 @@ impl Xtea {
         output[1] = v1;
     }
 
-    fn do_block_cipher(&self, input: &mut Bytes, output: &mut Bytes, decrypt: bool) -> io::Result<()> {
-        let mut input_buf = [0_u32; 2];
-        let mut output_buf = [0_u32; 2];
-        let iterations = input.readable() / 8;
+    fn do_block_cipher(&self, input: &mut [u8], output: &mut [u8], decrypt: bool) -> io::Result<()> {
+        let mut input_buffer = Bytes::new(input.to_vec());
+        let mut output_buffer = Bytes::new(output.to_vec());
+        let mut input_slice = [0_u32; 2];
+        let mut output_slice = [0_u32; 2];
+        let iterations = input_buffer.readable() / 8;
 
         for _ in 0..iterations {
-            input_buf[0] = input.get_u32()?;
-            input_buf[1] = input.get_u32()?;
+            input_slice[0] = input_buffer.get_u32()?;
+            input_slice[1] = input_buffer.get_u32()?;
 
             if decrypt {
-                self.decipher_block(&input_buf, &mut output_buf);
+                self.decipher_block(&input_slice, &mut output_slice);
             } else {
-                self.encipher_block(&input_buf, &mut output_buf);
+                self.encipher_block(&input_slice, &mut output_slice);
             }
 
-            output.put_u32(output_buf[0]);
-            output.put_u32(output_buf[1]);
+            output_buffer.put_u32(output_slice[0]);
+            output_buffer.put_u32(output_slice[1]);
         }
         Ok(())
     }
