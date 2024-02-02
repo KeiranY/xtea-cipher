@@ -48,12 +48,12 @@ impl Xtea {
 
     /// Encrypts the supplied `input` data and writes the processed results to the `output` array.
     pub fn encipher(&self, mut input: &[u8]) -> io::Result<Vec<u8>> {
-        self.do_block_cipher(&mut input, &mut output, false)
+        self.do_block_cipher(&mut input, false)
     }
 
     /// Decrypts the supplied encrypted `input` array and writes the processed results to the `output` array.
     pub fn decipher(&self, input: &[u8]) -> io::Result<Vec<u8>> {
-        self.do_block_cipher(input, output, true)
+        self.do_block_cipher(input, true)
     }
 
     fn encipher_block(&self, input: &[u32; 2], output: &mut [u32; 2]) {
