@@ -30,7 +30,7 @@ macro_rules! impl_put_bytes {
 }
 
 pub struct Bytes {
-    buffer: Vec<u8>,
+    pub buffer: Vec<u8>,
     read_pos: usize,
     write_pos: usize,
 }
