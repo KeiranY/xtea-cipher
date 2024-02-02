@@ -47,12 +47,12 @@ impl Xtea {
     }
 
     /// Encrypts the supplied `input` data and writes the processed results to the `output` array.
-    pub fn encipher(&self, mut input: &mut [u8], mut output: &mut [u8]) -> io::Result<()> {
+    pub fn encipher(&self, mut input: &[u8]) -> io::Result<Vec<u8>> {
         self.do_block_cipher(&mut input, &mut output, false)
     }
 
     /// Decrypts the supplied encrypted `input` array and writes the processed results to the `output` array.
-    pub fn decipher(&self, input: &mut [u8], output: &mut [u8]) -> io::Result<()> {
+    pub fn decipher(&self, input: &[u8]) -> io::Result<Vec<u8>> {
         self.do_block_cipher(input, output, true)
     }
 
@@ -97,9 +97,9 @@ impl Xtea {
         output[1] = v1;
     }
 
-    fn do_block_cipher(&self, input: &mut [u8], output: &mut [u8], decrypt: bool) -> io::Result<()> {
+    fn do_block_cipher(&self, input: &[u8], decrypt: bool) -> io::Result<Vec<u8>> {
         let mut input_buffer = Bytes::new(input.to_vec());
-        let mut output_buffer = Bytes::new(output.to_vec());
+        let mut output_buffer = Bytes::new(vec![0; input.len()]);
         let mut input_slice = [0_u32; 2];
         let mut output_slice = [0_u32; 2];
         let iterations = input_buffer.readable() / 8;
@@ -117,6 +117,6 @@ impl Xtea {
             output_buffer.put_u32(output_slice[0]);
             output_buffer.put_u32(output_slice[1]);
         }
-        Ok(())
+        Ok(output_buffer.buffer)
     }
 }
